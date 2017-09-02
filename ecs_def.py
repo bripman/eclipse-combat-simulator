@@ -27,10 +27,11 @@ class ECS:
         self.hulls = hull_def.Hull.GetHulls()
         self.players = self.SetupPlayers()
         self.AssembleFleets()
-        print("Finished with setup!")
+        print("\nFinished with setup!")
         print("Here are the players participating in combat:")
         for player in self.players:
-            print(player)
+            print("\n", player)
+        print()
         self.sim_results = [0 for x in range(len(self.players))]
     
     def SetupPlayers(self, nplayers=2):
@@ -201,7 +202,7 @@ def main():
     sim = ECS()
     sim.RunSimulations()
     sim.ReportResults()
-    print("Thank you for using the ECS!")
+    print("Thank you for using the ECS!\n")
     
 if __name__ == '__main__':
     main()

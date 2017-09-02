@@ -33,6 +33,38 @@ def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
         else:
             raise TypeError('Unsupported input type requested.')
     return result
+
+def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
+    """Receives various criteria and uses them to pester the user for input
+    until they give an answer with the desired type and within the specified
+    numerical limits (if bounded == True). Supported types are str and int."""
+    acceptable_input = False
+    while not acceptable_input:
+        response = input(prompt)
+        if not response:
+            print("You've gotta give me SOMETHING!")
+            continue
+        if desired_type == str:
+            try:
+                result = str(response)
+            except ValueError:
+                print("Please enter a string!")
+                continue
+            acceptable_input = True
+        elif desired_type == int:
+            try:
+                result = int(response)
+            except ValueError:
+                print("Please enter an integer!")
+                continue
+            if bounded and (result < low_lim or result > high_lim):
+                print("Please enter a number between %i and %i!"\
+                      % (low_lim, high_lim))
+                continue
+            acceptable_input = True
+        else:
+            raise TypeError('Unsupported input type requested.')
+    return result
     
 def main():
     """Uses the Get_Input function to pester the user for various types of

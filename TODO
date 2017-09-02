@@ -1,6 +1,8 @@
 To do:
-- Need to check that both sides have at least one ship and that all ships have a
-  weapon or else combat might never end.
+- There is a fail case where all ships in combat only have missiles equipped
+  and not all ships are destroyed after firing their missiles. Solve this by
+  setting has_weapon to 0 if a ship fires its missiles and then has no other
+  weapon. Then check that both sides still have weapons at the start of each round of combat. If not, it's a stalemate; report that as a third type of sim result.
 - Don't just exit the program right away. Allow the user to change the number of
   ships / equipped parts / number of sims and then rerun the simulation.
 - When I call AssembleFleets in ecs_def, I build a single instance of each

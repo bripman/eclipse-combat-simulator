@@ -51,11 +51,11 @@ class Ship:
         """Builds a Ship using the default Parts for that Ship's Hull."""
         self.parts = self.hull.default_parts # No need to make a deep copy here
         self.Integrate()
-        legal_ship = self.VerifyLegality()
-        if not legal_ship:
+        verified = self.Verify()
+        if not verified:
             # This is really surprising - all default loadouts should be legal.
             # Just crash right out of the program.
-            raise RuntimeError('Illegal default ship loadout! '
+            raise RuntimeError('Illegal default ship loadout! ' +
                                'ECS database is configured improperly.')
 
     def BuildCustom(self, parts):
@@ -72,9 +72,10 @@ class Ship:
                     parts[selected_part].is_available = 0
             print()
             self.Integrate()
-            legal_ship = self.VerifyLegality()
-            if not legal_ship:
-                print("Let's try again.\n")
+            verified = self.Verify()
+            if not verified:
+                print("Let's try again.")
+                input("Press Enter to continue...")
                 # Ship was constructed improperly - reset availability of all
                 # equipped Parts, reset the list of equipped Parts, and try
                 # again.
@@ -87,18 +88,26 @@ class Ship:
                 break
 
     def Integrate(self):
-        """Initializes the Ship's attributes and then integrates the stats from
+        """Initializes this Ship's attributes and then integrates the stats from
         all equipped Parts."""
-        self.net_damage = 0 # Total damage this Ship can do per round
-        self.net_power = self.hull.bonus_power # Power supplied - power consumed
-        self.armor = 1 # All Ships have at least 1 armor 
-        self.shield = 0 # Higher number makes it harder for enemies to hit
-        self.hit_bonus = 0 # Higher number makes it easier to hit enemies
+        self.net_damage = 0
+        # Total damage this Ship can do per round
+        self.net_power = self.hull.bonus_power
+        # Power supplied - power consumed
+        self.armor = 1
+        # All Ships have at least 1 armor 
+        self.shield = 0
+        # Higher number makes it harder for enemies to hit
+        self.hit_bonus = 0
+        # Higher number makes it easier to hit enemies
         self.initiative = self.hull.bonus_initiative
         # Initiative determines the order in which Ships attack in combat
-        self.has_drive = 0 # Does the Ship have a drive Part equipped?
-        self.has_weapon = 0 # Does the Ship have a weapon Part equipped?
-        self.kill_priority = 0 # How tempting a target is it for enemy Ships?
+        self.has_drive = 0
+        # Does the Ship have a drive Part equipped?
+        self.has_weapon = 0
+        # Does the Ship have a weapon Part equipped?
+        self.kill_priority = 0
+        # How tempting a target is this Ship in combat?
         for part in self.parts:
             self.net_damage += part.damage * part.nshots
             self.net_power += part.power
@@ -115,29 +124,64 @@ class Ship:
         # Then reduce it by a factor proportional to the Ship's toughness
         self.kill_priority /= self.armor * (4 + self.shield) / 6.0
 
+    def Verify(self):
+        """Verify that this Ship is shipshape, as it were."""
+        # Check that the Ship is legal
+        legal = self.VerifyLegality()
+        if not legal:
+            return False
+        # Check that all unusual design decisons were intentional
+        weirdness_intentional = self.VerifyDesignDecisions()
+        if not weirdness_intentional:
+            return False
+        # No dealbreakers found!
+        return True
+
     def VerifyLegality(self):
-        """Checks the legality of an assembled Ship. Ships need to have
-        total power >= 0 (i.e. at least as much power supply as consumption)
-        and most Ships require a drive. Ships also cannot have more empty slots
-        than the default loadout for their Hull."""
-        legal_ship = True
-        if self.net_power < 0:
-            # Power consumed by Parts > power supplied by Parts
-            print("*** Design flaw: power supplied < power consumed.")
-            legal_ship = False
+        """Returns True if this Ship is legal within Eclipse's rules.
+        Returns False otherwise."""
+        legal = True
+        # Confirm that power consumed <= power supplied
+        if self.net_power < 0:    
+            print("***--> Design flaw: power supplied < power consumed.")
+            legal = False
+        # If the Ship needs a drive, confirm that it has one
         if self.hull.needs_drive and not self.has_drive:
-            # The Ship's Hull requires a drive Part but it doesn't have one
-            print("*** Design flaw: no drive equipped.")
-            legal_ship = False
-        # Now confirm that the ship doesn't have more empty slots than are in
-        # the default loadout.
-        empty_slots = sum(part.name == '<Empty_Slot>' for part in self.parts)
-        empty_slots_allowed = sum(part.name == '<Empty_Slot>' \
+            print("***--> Design flaw: no drive equipped.")
+            legal = False
+        # Confirm that the Ship doesn't have more empty slots than are in
+        # the default loadout. (You can't actually add empty slots to a Ship.)
+        empty_slots = sum(part.name == '<Empty Slot>' for part in self.parts)
+        empty_slots_allowed = sum(part.name == '<Empty Slot>' \
                                   for part in self.hull.default_parts)
         if empty_slots > empty_slots_allowed:
-            print("*** Design flaw: too many empty slots.")
-            legal_ship = False
-        return legal_ship
+            print("***--> Design flaw: too many empty slots.")
+            legal = False
+        return legal
+
+    def VerifyDesignDecisions(self):
+        """Returns True if all of this Ship's unsual design decisions were
+        intentional. Returns False otherwise."""
+        weirdness_intentional = True
+        # If the Ship has no weapons, confirm that this was intentional.
+        weapon_equipped = False
+        for part in self.parts:
+            if part.is_weapon:
+                weapon_equipped = True
+        if not weapon_equipped:
+            while True:
+                response = user_input.GetInput(
+                    "This %s design has no weapons. " % (self.hull.name) +
+                    "Is this intentional? (y/n)? ", str)
+                if response not in ['y', 'Y', 'n', 'N']:
+                    continue
+                else:
+                    break
+            if response in ['y', 'Y']:
+                pass
+            else:
+                weirdness_intentional = False
+        return weirdness_intentional
 
     def __str__(self):
         """Returns a verbose description of the Ship."""
@@ -184,6 +228,7 @@ def main():
     parts = part_def.Part.GetParts()
     player = player_def.Player('Ben')
     new_ship = Ship(hulls['Interceptor'], parts, player)
+    print()
     print(new_ship)
     
 if __name__ == '__main__':
