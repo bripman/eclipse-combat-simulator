@@ -1,7 +1,6 @@
 #!/usr/bin/env python
-"""part_def.py -- Defines the Part class, which is used by the 
-Eclipse Combat Simulator. Has debugging functionality if called as
-_main__."""
+"""part_def.py -- Defines the Part class, which is used by the Eclipse Combat
+Simulator. Has debugging functionality if called as _main__."""
 
 import sys
 import os

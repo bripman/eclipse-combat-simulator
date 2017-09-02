@@ -61,7 +61,7 @@ class ECS:
         for player in self.players:
             print("Let's build %s's fleet." % (player.name))
             for hull_name in self.hulls.keys():
-                if self.hulls[hull_name].is_mobile == 0 and player.id > 0:
+                if self.hulls[hull_name].is_mobile == 0 and player.id != 0:
                     # The Player with ID 0 is the defender; they are the only
                     # one who can have immobile Ships (e.g. the space station).
                     continue
@@ -72,7 +72,7 @@ class ECS:
                     int, True, 0, hull.nmax)
                 if nships > 0:
                     print("Okay, let's build those %ss." % (hull.name))
-                    new_ship = ship_def.Ship.BuildShip(hull, self.parts, player)
+                    new_ship = ship_def.Ship(hull, self.parts, player)
                     for i in range(nships):
                         # Can't just add nships * new_ship; they would all be
                         # the same Ship object. Fool me once, Python.

@@ -3,6 +3,13 @@ To do:
   weapon or else combat might never end.
 - Don't just exit the program right away. Allow the user to change the number of
   ships / equipped parts / number of sims and then rerun the simulation.
+- When I call AssembleFleets in ecs_def, I build a single instance of each
+  Ship type for each player and then deep copy that Ship as many times as they
+  have copies of that Ship in their fleet. Does this actually update the ships
+  class attribute? Do the Ships actually have unique IDs? Did I seriously not
+  think about this until now?
+- Are missiles being handled correctly? I don't remember whether I implemented
+  them correctly or not.
 - Make sure I'm managing Parts correctly (there's a list of Parts stored in each
   instance of the ECS class and that list keeps track of whether each Part is
   available but I generate Parts in other places as well.)
@@ -26,13 +33,3 @@ To do:
   class and replaced them with self.owner (the Player object). In practice this
   slows the code down by a factor of 100 or more. Use the profiler to figure out
   what's going on.
-- Maybe the two static methods BuildShip and BuildDefaultShip should be folded
-  into the constructor for the Ship class:
-
-  class Ship:
-      ships = 0 # Used to tag each Ship with a unique ID
-    
-      def __init__(self, hull, player, is_custom=false): 
-
-  Make BuildShip and BuildDefaultShip private methods within Ship and
-  __init__ can call either one of them as needed.
