@@ -53,33 +53,51 @@ class Part:
         return description
 
     @staticmethod
-    def GetPartsFromDB():
-        """Returns a dictionary whose keys are Part names indexing Part objects
-        representing the available Ship parts in the board game Eclipse. Part
-        info is obtained from an SQLite database."""
+    def GetParts():
+        """Returns a dictionary whose keys are Part names indexing all Part
+        objects available to the ECS."""
         parts = {}
-        part_data = db_parser.GetParts()
-        for name in part_data.keys():
+        part_attributes = Part.GetPartAttributes()
+        for name in part_attributes.keys():
             new_part = Part(name,
-                            part_data[name]['damage'],
-                            part_data[name]['nshots'],
-                            part_data[name]['power'],
-                            part_data[name]['armor'],
-                            part_data[name]['shield'],
-                            part_data[name]['hit_bonus'],
-                            part_data[name]['initiative'],
-                            part_data[name]['is_weapon'],
-                            part_data[name]['is_missile'],
-                            part_data[name]['is_drive'],
-                            part_data[name]['is_ancient'])
+                            part_attributes[name]['damage'],
+                            part_attributes[name]['nshots'],
+                            part_attributes[name]['power'],
+                            part_attributes[name]['armor'],
+                            part_attributes[name]['shield'],
+                            part_attributes[name]['hit_bonus'],
+                            part_attributes[name]['initiative'],
+                            part_attributes[name]['is_weapon'],
+                            part_attributes[name]['is_missile'],
+                            part_attributes[name]['is_drive'],
+                            part_attributes[name]['is_ancient'])
             parts[name] = new_part
         return parts
 
+    @staticmethod
+    def GetPartAttributes():
+        """Retrieves information about all available Parts from the ECS SQLite
+        database and returns it as a dictionary of dictionaries where the outer
+        dict keys are Part names and the inner dict keys are attribute names
+        indexing each Part's attribute values."""
+        parts = {}
+        part_table = db_parser.GetTableAsDict('part')
+        for row in part_table:
+            # Make a new nested dictionary indexed by this Part's name
+            part_name = row['part_name']
+            parts[part_name] = {}
+            for key in row.keys():
+                if key == 'part_name':
+                    pass
+                else:
+                    parts[part_name][key] = row[key]
+        return parts
+
 def SelectPart(parts, slot_num):
-    """Used to display a list of Parts to the user so that they can select
-    a Part to equip to a Ship. The parts argument is in the same format as the
-    output from the GetPartsFromDB static method of the Part class. Returns the
-    name of the selected Part as a string."""
+    """Displays a list of Parts to the user so that they can select a Part to
+    equip to a Ship. The parts argument must be in the same format as the output
+    from the GetParts static method of the Part class. Returns the name of the
+    selected Part as a string."""
     available_parts = \
         [key for key in sorted(parts.keys()) if parts[key].is_available]
     print("\nAvailable parts:")
@@ -87,26 +105,27 @@ def SelectPart(parts, slot_num):
         print("%2i -" %(i + 1), parts[available_parts[i]].name)
         time.sleep(0.01)
     selected_part = user_input.GetInput(
-            "Which part would you like to equip in slot %i? " % (slot_num),
+            "\nWhich part would you like to equip in slot %i? " % (slot_num),
             int, True, 1, len(available_parts))
     part_name = parts[available_parts[selected_part - 1]].name
     return part_name
 
 def main():
-    """Gives the GetParts function a spin and shows the results."""
+    """Tests various functions defined in part_def."""
     print("\nHello world from part_def.py!\n")
 
-    all_parts = Part.GetPartsFromDB()
+    all_parts = Part.GetParts()
     for key in all_parts.keys():
-        print(all_parts[key], "\n")
-    print("^ These are all the parts I can make.")
+        print(all_parts[key].name)
+        time.sleep(0.01)
+    print("\n^ These are all the parts I can make.")
     print("Total number of parts = %i" % (len(all_parts)))
 
-    input("\nPress Enter to continue...\n")
-
-    print("Now let's try selecting a part to equip to a ship.")
-    parts = Part.GetPartsFromDB()
+    print("\nNow let's try selecting a part to equip to a ship.")
+    input("Press Enter to continue...")
+    parts = Part.GetParts()
     part_name = SelectPart(parts, 1)
+
     print("You chose to equip the %s." % (part_name))
 
 if __name__ == '__main__':

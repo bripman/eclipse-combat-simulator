@@ -4,6 +4,7 @@ Combat Simulator. Has debugging functionality if called as __main__."""
 
 import db_parser
 import part_def
+import time
 
 class Hull:
     """The Hull class contains all the basic, immutable characteristics
@@ -36,37 +37,72 @@ class Hull:
         return description
 
     @staticmethod
-    def GetHullsFromDB():
-        """Returns a list of Hull objects representing the available Ship
-        types in the board game Eclipse. Hull info is obtained from an
-        SQLite database."""
+    def GetHulls():
+        """Returns a dictionary whose keys are Hull names indexing all Hull
+        objects available to the ECS."""
         hulls = {}
-        all_hulls = db_parser.GetHulls()
-        all_parts = part_def.Part.GetPartsFromDB()
-        for hull_name in all_hulls.keys():
+        hull_attributes = Hull.GetHullAttributes()
+        all_parts = part_def.Part.GetParts()
+        for hull_name in hull_attributes.keys():
             default_parts = []
-            for part_name in all_hulls[hull_name]['loadout']:
+            for part_name in hull_attributes[hull_name]['loadout']:
                 default_parts.append(all_parts[part_name])
             new_hull = Hull(hull_name,
-                            all_hulls[hull_name]['nmax'],
-                            all_hulls[hull_name]['nslots'],
-                            all_hulls[hull_name]['bonus_power'],
-                            all_hulls[hull_name]['bonus_initiative'],
-                            all_hulls[hull_name]['needs_drive'],
-                            all_hulls[hull_name]['is_mobile'],
+                            hull_attributes[hull_name]['nmax'],
+                            hull_attributes[hull_name]['nslots'],
+                            hull_attributes[hull_name]['bonus_power'],
+                            hull_attributes[hull_name]['bonus_initiative'],
+                            hull_attributes[hull_name]['needs_drive'],
+                            hull_attributes[hull_name]['is_mobile'],
                             default_parts)
             hulls[hull_name] = new_hull
         return hulls
 
+    @staticmethod
+    def GetHullAttributes():
+        """Retrieves information about all available Hulls from the ECS SQLite
+        database and returns it as a dictionary of dictionaries where the outer
+        dict keys are Hull names and the inner dict keys are attribute names
+        indexing each Hull's attribute values."""
+        hulls = {}
+        hull_table = db_parser.GetTableAsDict('hull')
+        hull_loadouts = Hull.GetHullLoadouts()
+        for row in hull_table:
+            # Make a new nested dictionary indexed by this Hull's name
+            hull_name = row['hull_name']
+            hulls[hull_name] = {}
+            for key in row.keys():
+                if key == 'hull_name':
+                    pass
+                else:
+                    hulls[hull_name][key] = row[key]
+            # Now add this hull's loadout to its dictionary
+            hulls[hull_name]['loadout'] = hull_loadouts[hull_name]
+        return hulls
+
+    @staticmethod
+    def GetHullLoadouts():
+        """Retrieves the default loadouts for each Hull from the ECS SQLite
+        database and returns them as a dictionary where each key is a Hull name
+        indexing a list of Part names."""
+        loadouts = {}
+        loadout_table = db_parser.GetTableAsDict('loadout')
+        for row in loadout_table:
+            if row['hull_name'] not in loadouts.keys():
+                loadouts[row['hull_name']] = []
+            loadouts[row['hull_name']].append(row['part_name'])
+        return loadouts
+
 def main():
-    """Gives the GetHullsFromDB function a spin and shows the results."""
+    """Tests various functions defined in hull_def."""
     print("\nHello world from hull_def.py\n")
 
-    hulls = Hull.GetHullsFromDB()
-    for name in hulls.keys():
-        print(hulls[name], "\n")
-    print("^ These are all the hulls I can make.")
-    print("Total number of hulls = %i" % (len(hulls))) 
-    
+    all_hulls = Hull.GetHulls()
+    for key in all_hulls.keys():
+        print(all_hulls[key], "\n")
+        time.sleep(0.01)
+    print("\n^ These are all the hulls I can make.")
+    print("Total number of hulls = %i" % (len(all_hulls))) 
+
 if __name__ == '__main__':
     main()

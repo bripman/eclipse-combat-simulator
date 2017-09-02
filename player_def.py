@@ -44,7 +44,7 @@ class Player:
         self.fleet = sorted(self.fleet, key=lambda ship: -ship.kill_priority)
     
 def main():
-    """Creates a sample Player and displays it."""
+    """Tests various functions defined in player_def."""
     print("\nHello world from player_def.py!\n")
     
     print("Let's try making a player.")

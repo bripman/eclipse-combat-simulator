@@ -35,8 +35,8 @@ def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
     return result
     
 def main():
-    """Used for debugging. Uses the Get_Input function to pester the
-    user for various types of input."""
+    """Uses the Get_Input function to pester the user for various types of
+    input."""
     print("Hello world from user_input.py!")
     print("Let's try asking the user for some input.")
     test1 = GetInput('Give me a string: ', str)

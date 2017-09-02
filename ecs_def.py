@@ -23,8 +23,8 @@ class ECS:
         """Upon creation of an ECS object, the __init__function gets names
         for each participating Player and constructs their fleets."""
         print("Welcome to the Eclipse Combat Simulator!")
-        self.parts = part_def.Part.GetPartsFromDB()
-        self.hulls = hull_def.Hull.GetHullsFromDB()
+        self.parts = part_def.Part.GetParts()
+        self.hulls = hull_def.Hull.GetHulls()
         self.players = self.SetupPlayers()
         self.AssembleFleets()
         print("Finished with setup!")
@@ -99,6 +99,7 @@ class ECS:
             fleet2 = copy.deepcopy(self.players[1].fleet)
             self.SimulateCombat(fleet1, fleet2, sim_num)
             sim_num += 1
+        print("Simulations complete.")
 
     def SimulateCombat(self, fleet1, fleet2, sim_num):
         while len(fleet1) > 0 and len(fleet2) > 0:
@@ -128,10 +129,10 @@ class ECS:
                     # The attacking ships belong to fleet2, so fire at fleet1
                     self.MakeAttacks(attacks, firing_seq, fleet1)
         if len(fleet1) < 1:
-            print("Player 2 wins simulation %i!" % (sim_num + 1))
+            print("Player 2 wins simulation %i" % (sim_num + 1))
             self.sim_results[1] += 1
         else:
-            print("Player 1 wins simulation %i!" % (sim_num + 1))
+            print("Player 1 wins simulation %i" % (sim_num + 1))
             self.sim_results[0] += 1
         return
     
@@ -188,7 +189,7 @@ class ECS:
         if nsims_completed == 0:
             print("No simulations have been run yet!")
         else:
-            print("Here are the simulation results:")
+            print("\nHere are the simulation results:")
             for i in range(len(self.players)):
                 print("%s won %i times (%.2f%% probability of victory)" \
                       % (self.players[i].name, self.sim_results[i], \

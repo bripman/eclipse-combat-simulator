@@ -1,4 +1,8 @@
 To do:
+- Need to check that both sides have at least one ship and that all ships have a
+  weapon or else combat might never end.
+- Don't just exit the program right away. Allow the user to change the number of
+  ships / equipped parts / number of sims and then rerun the simulation.
 - Make sure I'm managing Parts correctly (there's a list of Parts stored in each
   instance of the ECS class and that list keeps track of whether each Part is
   available but I generate Parts in other places as well.)
@@ -18,8 +22,6 @@ To do:
   opponents' ships have no hit bonus. Maybe opponent's ships should each
   calculate kill_priority values for themselves? Then they could take into
   account their own hit bonuses and initiative and damage output and so on.
-- Should make sure both sides have at least one ship and one weapon or else
-  combat might never end.
 - At one point I got rid of the owner_id and owner_name attributes of the Ship
   class and replaced them with self.owner (the Player object). In practice this
   slows the code down by a factor of 100 or more. Use the profiler to figure out

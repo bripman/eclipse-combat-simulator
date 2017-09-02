@@ -180,12 +180,12 @@ class Ship:
         return new_ship
 
 def main():
-    """Takes the BuildShip function for a spin and shows the results."""
+    """Tests various functions defined in ship_def."""
     print("\nHello world from ship_def.py!\n")
 
     print("Let's try making a ship.")
-    hulls = hull_def.Hull.GetHullsFromDB()
-    parts = part_def.Part.GetPartsFromDB()
+    hulls = hull_def.Hull.GetHulls()
+    parts = part_def.Part.GetParts()
     player = player_def.Player('Ben')
     new_ship = Ship.BuildShip(hulls['Interceptor'], parts, player)
     print(new_ship)
