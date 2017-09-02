@@ -33,14 +33,9 @@ class Ship:
         """Begins the process of building a Ship. Determines whether or not the
         user wants to construct a custom Ship and then calls the appropriate
         function."""
-        while True:
-            default = user_input.GetInput(
-                "Should we use the default %s parts (y/n)? "
-                % (self.hull.name), str)
-            if default not in ['y', 'Y', 'n', 'N']:
-                continue
-            else:
-                break
+        default = user_input.GetStrInput(
+            "Should we use the default %s parts (y/n)? "
+            % (self.hull.name), True, ['y', 'Y', 'n', 'N'])
         if default in ['y', 'Y']:
             # No need to pass parts; hull already contains the default loadout.
             self.BuildDefault()
@@ -169,14 +164,10 @@ class Ship:
             if part.is_weapon:
                 weapon_equipped = True
         if not weapon_equipped:
-            while True:
-                response = user_input.GetInput(
-                    "This %s design has no weapons. " % (self.hull.name) +
-                    "Is this intentional? (y/n)? ", str)
-                if response not in ['y', 'Y', 'n', 'N']:
-                    continue
-                else:
-                    break
+            response = user_input.GetStrInput(
+                "This %s design has no weapons. " % (self.hull.name) +
+                "Is this intentional? (y/n)? ",
+                True, ['y', 'Y', 'n', 'N'])
             if response in ['y', 'Y']:
                 pass
             else:

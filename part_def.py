@@ -103,9 +103,9 @@ def SelectPart(parts, slot_num):
     for i in range(len(available_parts)):
         print("%2i -" %(i + 1), parts[available_parts[i]].name)
         time.sleep(0.01)
-    selected_part = user_input.GetInput(
+    selected_part = user_input.GetIntInput(
             "\nWhich part would you like to equip in slot %i? " % (slot_num),
-            int, True, 1, len(available_parts))
+            True, 1, len(available_parts))
     part_name = parts[available_parts[selected_part - 1]].name
     return part_name
 
@@ -124,7 +124,6 @@ def main():
     input("Press Enter to continue...")
     parts = Part.GetParts()
     part_name = SelectPart(parts, 1)
-
     print("You chose to equip the %s." % (part_name))
 
 if __name__ == '__main__':

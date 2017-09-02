@@ -2,10 +2,9 @@
 """user_input.py -- Contains the GetInput function. Has debugging
 functionality if called as __main__."""
 
-def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
-    """Receives various criteria and uses them to pester the user for input
-    until they give an answer with the desired type and within the specified
-    numerical limits (if bounded == True). Supported types are str and int."""
+def GetInput(prompt, desired_type):
+    """Uses the supplied prompt to pester the user until they give input of
+    the desired type."""
     acceptable_input = False
     while not acceptable_input:
         response = input(prompt)
@@ -14,66 +13,60 @@ def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
             continue
         if desired_type == str:
             try:
-                result = str(response)
+                response = str(response)
             except ValueError:
                 print("Please enter a string!")
                 continue
             acceptable_input = True
         elif desired_type == int:
             try:
-                result = int(response)
+                response = int(response)
             except ValueError:
                 print("Please enter an integer!")
-                continue
-            if bounded and (result < low_lim or result > high_lim):
-                print("Please enter a number between %i and %i!"\
-                      % (low_lim, high_lim))
                 continue
             acceptable_input = True
         else:
             raise TypeError('Unsupported input type requested.')
-    return result
+    return response
 
-def GetInput(prompt, desired_type, bounded=False, low_lim=0, high_lim=1):
-    """Receives various criteria and uses them to pester the user for input
-    until they give an answer with the desired type and within the specified
-    numerical limits (if bounded == True). Supported types are str and int."""
+def GetStrInput(prompt, constrained=False, acceptable_strings=[]):
+    """Uses the supplied prompt to pester the user until they yield a string.
+    If the constrained arg is True, only accepts input that is contained within
+    the acceptable_strings list."""
     acceptable_input = False
     while not acceptable_input:
-        response = input(prompt)
-        if not response:
-            print("You've gotta give me SOMETHING!")
+        response = GetInput(prompt, str)
+        if constrained and response not in acceptable_strings:
+            print("That is not an acceptable answer.")
             continue
-        if desired_type == str:
-            try:
-                result = str(response)
-            except ValueError:
-                print("Please enter a string!")
-                continue
-            acceptable_input = True
-        elif desired_type == int:
-            try:
-                result = int(response)
-            except ValueError:
-                print("Please enter an integer!")
-                continue
-            if bounded and (result < low_lim or result > high_lim):
-                print("Please enter a number between %i and %i!"\
-                      % (low_lim, high_lim))
-                continue
-            acceptable_input = True
         else:
-            raise TypeError('Unsupported input type requested.')
-    return result
+            acceptable_input = True
+    return response
+
+def GetIntInput(prompt, constrained=False, low_lim=0, high_lim=1):
+    """Uses the supplied prompt to pester the user until they yield an integer.
+    If the constrained arg is True, only accepts input that is >= low_lim and
+    <= high_lim."""
+    acceptable_input = False
+    while not acceptable_input:
+        response = GetInput(prompt, int)
+        if constrained and (response < low_lim or response > high_lim):
+            print("That is not an acceptable answer.")
+            continue
+        else:
+            acceptable_input = True
+    return response
     
 def main():
-    """Uses the Get_Input function to pester the user for various types of
-    input."""
-    print("Hello world from user_input.py!")
+    """Tests various functions defined in user_input."""
+    print("\nHello world from user_input.py!\n")
+
     print("Let's try asking the user for some input.")
-    test1 = GetInput('Give me a string: ', str)
-    test2 = GetInput('Give me an integer: ', int)
-    test3 = GetInput('Give me an integer between 0 and 10: ', int, True, 0, 10)
-    
+    str_input1 = GetStrInput('Give me any string: ')
+    str_input2 = GetStrInput('Give me a decision (y or n): ', True, ['y', 'n'])
+    int_input1 = GetIntInput('Give me any integer: ')
+    int_input2 = GetIntInput('Give me a number between 1 and 10: ',
+                             True, 1, 10)
+
 if __name__ == '__main__':
     main()

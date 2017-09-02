@@ -49,8 +49,8 @@ class ECS:
             print("Players 2-%i are attacking and higher-numbered players \
                     arrived in the system later." % (nplayers))
         for i in range(nplayers):
-            name = user_input.GetInput("Please enter player %i's name: "
-                    % (i + 1), str)
+            name = user_input.GetStrInput("Please enter player %i's name: "
+                                          % (i + 1))
             players += [player_def.Player(name)]
         return players
     
@@ -67,10 +67,10 @@ class ECS:
                     # one who can have immobile Ships (e.g. the space station).
                     continue
                 hull = self.hulls[hull_name]
-                nships = user_input.GetInput(
+                nships = user_input.GetIntInput(
                     "How many %ss does %s have (%i-%i)? "
                     % (hull.name, player.name, 0, hull.nmax),
-                    int, True, 0, hull.nmax)
+                    True, 0, hull.nmax)
                 if nships > 0:
                     print("Okay, let's build those %ss." % (hull.name))
                     new_ship = ship_def.Ship(hull, self.parts, player)
@@ -87,8 +87,8 @@ class ECS:
         if len(self.players) != 2:
             raise RuntimeError(
                 "The ECS currently only supports 2 combatants. Sorry!")
-        nsims = user_input.GetInput(
-            "How many combat sims should we run? ", int, True, 1, 1000000)
+        nsims = user_input.GetIntInput(
+            "How many combat sims should we run? ", True, 1, 1000000)
         sim_num = 0
         # Apply initiative bonus to the defending player.
         for ship in self.players[0].fleet:
