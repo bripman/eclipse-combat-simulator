@@ -2,46 +2,6 @@
 """ecs_def.py -- Defines the ECS (short for Eclipse Combat Simulator) class.
 Has debugging functionality when called as __main__."""
 
-"""
-To do:
-- Make sure I'm managing Parts correctly (there's a list of Parts stored in each
-  instance of the ECS class and that list keeps track of whether each Part is
-  available but I generate Parts in other places as well.)
-- I saved the default_parts for each Hull as a list of Part objects. Is this
-  needlessly inefficient? There will be a lot of unneeded Part objects out there
-  this way... could just have it be a list of names instead. Actually, is this 
-  even true? Currently we make a list of Hulls, each of which has a list of
-  default parts. Then each individual Ship's Hull references the same object, so
-  I think it's actually not that inefficient.
-- Generally speaking, I think the way I'm handling objects is sloppy and leaves
-  the program open to errors in the future. Rethink this once I have it working
-  again.
-- Add more error-checking
-- Fix doc strings to be PEP8 compliant, do a general pass on style
-- kill_priority stat could stand to be improved (currently takes shield
-  into account when determining toughness, but shield isn't relevant if
-  opponents' ships have no hit bonus. Maybe opponent's ships should each
-  calculate kill_priority values for themselves? Then they could take into
-  account their own hit bonuses and initiative and damage output and so on.
-- Should make sure both sides have at least one ship and one weapon or else
-  combat might never end.
-- At one point I got rid of the owner_id and owner_name attributes of the Ship
-  class and replaced them with self.owner (the Player object). In practice this
-  slows the code down by a factor of 100 or more. Use the profiler to figure out
-  what's going on.
-- Maybe the two static methods BuildShip and BuildDefaultShip should be folded
-  into the constructor for the Ship class:
-
-  class Ship:
-      ships = 0 # Used to tag each Ship with a unique ID
-    
-      def __init__(self, hull, player, is_custom=false): 
-
-  Make BuildShip and BuildDefaultShip private methods within Ship and
-  __init__ can call either one of them as needed.
-"""
-
-
 import sys
 import os
 import copy
