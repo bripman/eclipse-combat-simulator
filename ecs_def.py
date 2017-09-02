@@ -17,20 +17,12 @@ To do:
   the program open to errors in the future. Rethink this once I have it working
   again.
 - Add more error-checking
-- Fix doc strings to be PEP8 compliant, ensure all lines are <80 lines, etc.
-- Make sure that constructed ships never have more than 1 empty slot (or better
-  yet, have that as a property of the Hull class and check it as a function in
-  Verify_Legality or whatever.
+- Fix doc strings to be PEP8 compliant, do a general pass on style
 - kill_priority stat could stand to be improved (currently takes shield
   into account when determining toughness, but shield isn't relevant if
   opponents' ships have no hit bonus. Maybe opponent's ships should each
   calculate kill_priority values for themselves? Then they could take into
   account their own hit bonuses and initiative and damage output and so on.
-- Right now we have automated target priority. Would be nice to add manual entry
-  of target priority by ship type, e.g. I want my cruisers to attack their
-  dreadnought, my interceptors to attack their cruisers, and so on.
-- Make it so that ancient parts go back to the correct place in the parts list
-  when they're returned.
 - Should make sure both sides have at least one ship and one weapon or else
   combat might never end.
 - At one point I got rid of the owner_id and owner_name attributes of the Ship
