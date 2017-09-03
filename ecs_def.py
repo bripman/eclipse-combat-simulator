@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ecs_def.py -- Defines the ECS (short for Eclipse Combat Simulator) class.
 Has debugging functionality when called as __main__."""
 
@@ -73,13 +73,23 @@ class ECS:
                     True, 0, hull.nmax)
                 if nships > 0:
                     print("Okay, let's build those %ss." % (hull.name))
-                    new_ship = ship_def.Ship(hull, self.parts, player)
+                    # First definet the prototype
+                    prototype = ship_def.Ship(hull, self.parts, player)
+                    # Then build nships duplicates of this prototype
+                    # player.fleet.append([
+                    #     ship_def.Ship(hull, self.parts, player,
+                    #     True, prototype.parts)
+                    #     for i in range(nships)])
                     for i in range(nships):
-                        # Can't just add nships * new_ship; they would all be
-                        # the same Ship object. Fool me once, Python.
-                        player.fleet.append(copy.deepcopy(new_ship))
+                        # Build nships duplicates of this prototype
+                        player.fleet.append(
+                            ship_def.Ship(hull, self.parts, player,
+                            True, prototype.parts))
             # Finished creating Ships for this Player, now sort their fleet
             player.SortFleet()
+            print("Player %s has these ships:" % (player.name))
+            for ship in player.fleet:
+                print(ship)
     
     def RunSimulations(self):
         """Runs a user-specified number of combat simulations between

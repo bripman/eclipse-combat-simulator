@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """db_parser.py -- Contains various functions used to query the ECS database.
 Has debugging functionality if called as __main__."""
 

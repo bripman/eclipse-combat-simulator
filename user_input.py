@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """user_input.py -- Contains the GetInput function. Has debugging
 functionality if called as __main__."""
 

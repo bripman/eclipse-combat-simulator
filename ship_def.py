@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """ship_def.py -- Defines the Ship class, which is used by the Eclipse Combat
 Simulator. Has debugging functionality if called as __main__."""
 
@@ -21,13 +21,20 @@ class Ship:
     is referred to as "armor" in all ECS code."""
     ships = 0 # Used to tag each Ship with a unique ID
     
-    def __init__(self, hull, parts, player):
+    def __init__(self, hull, parts, player, dupe=False, dupe_parts=[]):
         self.id = Ship.ships
         Ship.ships += 1
         self.hull = hull
         self.owner = player
         self.parts = [] # List of all equipped Parts
-        self.Build(parts)
+        if not dupe:
+            # We are constructing the prototype all Ships of this Hull
+            # type for this Player
+            self.Build(parts)
+        else:
+            # We are duplicating a prototype to fill out this Player's
+            # fleet.
+            self.BuildDupe(dupe_parts)
 
     def Build(self, parts):
         """Begins the process of building a Ship. Determines whether or not the
@@ -44,14 +51,14 @@ class Ship:
 
     def BuildDefault(self):
         """Builds a Ship using the default Parts for that Ship's Hull."""
-        self.parts = self.hull.default_parts # No need to make a deep copy here
+        self.parts = self.hull.default_parts
         self.Integrate()
         verified = self.Verify()
         if not verified:
             # This is really surprising - all default loadouts should be legal.
             # Just crash right out of the program.
-            raise RuntimeError('Illegal default ship loadout! ' +
-                               'ECS database is configured improperly.')
+            raise RuntimeError("Illegal default ship loadout! " +
+                               "ECS database is configured improperly.")
 
     def BuildCustom(self, parts):
         """Builds a Ship using a customized set of Parts."""
@@ -81,6 +88,15 @@ class Ship:
             else:
                 # Ship was constucted properly!
                 break
+
+    def BuildDupe(self, dupe_parts):
+        """Builds a duplicate Ship with a predefined Parts list."""
+        self.parts = dupe_parts
+        self.Integrate()
+        verified = self.Verify()
+        if not verified:
+            # I cannot imagine how this would ever happen but just in case...
+            raise RuntimeError("Illegal Ship duplicate!")    
 
     def Integrate(self):
         """Initializes this Ship's attributes and then integrates the stats from

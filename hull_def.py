@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """hull_def.py -- Defines the Hull class, which is used by the Eclipse
 Combat Simulator. Has debugging functionality if called as __main__."""
 

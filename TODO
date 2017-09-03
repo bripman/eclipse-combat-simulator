@@ -5,11 +5,6 @@ To do:
   weapon. Then check that both sides still have weapons at the start of each round of combat. If not, it's a stalemate; report that as a third type of sim result.
 - Don't just exit the program right away. Allow the user to change the number of
   ships / equipped parts / number of sims and then rerun the simulation.
-- When I call AssembleFleets in ecs_def, I build a single instance of each
-  Ship type for each player and then deep copy that Ship as many times as they
-  have copies of that Ship in their fleet. Does this actually update the ships
-  class attribute? Do the Ships actually have unique IDs? Did I seriously not
-  think about this until now?
 - Are missiles being handled correctly? I don't remember whether I implemented
   them correctly or not.
 - Make sure I'm managing Parts correctly (there's a list of Parts stored in each
