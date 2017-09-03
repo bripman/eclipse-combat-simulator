@@ -40,7 +40,7 @@ class Ship:
         """Begins the process of building a Ship. Determines whether or not the
         user wants to construct a custom Ship and then calls the appropriate
         function."""
-        default = user_input.GetStrInput(
+        default = user_input.GetStr(
             "Should we use the default %s parts (y/n)? "
             % (self.hull.name), True, ['y', 'Y', 'n', 'N'])
         if default in ['y', 'Y']:
@@ -92,11 +92,8 @@ class Ship:
     def BuildDupe(self, dupe_parts):
         """Builds a duplicate Ship with a predefined Parts list."""
         self.parts = dupe_parts
-        self.Integrate()
-        verified = self.Verify()
-        if not verified:
-            # I cannot imagine how this would ever happen but just in case...
-            raise RuntimeError("Illegal Ship duplicate!")    
+        # We will assume that this design verifies
+        self.Integrate()   
 
     def Integrate(self):
         """Initializes this Ship's attributes and then integrates the stats from
@@ -180,12 +177,12 @@ class Ship:
             if part.is_weapon:
                 weapon_equipped = True
         if not weapon_equipped:
-            response = user_input.GetStrInput(
+            response = user_input.GetStr(
                 "This %s design has no weapons. " % (self.hull.name) +
                 "Is this intentional? (y/n)? ",
                 True, ['y', 'Y', 'n', 'N'])
             if response in ['y', 'Y']:
-                pass
+                weirdness_intentional = True
             else:
                 weirdness_intentional = False
         return weirdness_intentional

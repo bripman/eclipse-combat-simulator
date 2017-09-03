@@ -1,32 +1,7 @@
 To do:
-- There is a fail case where all ships in combat only have missiles equipped
-  and not all ships are destroyed after firing their missiles. Solve this by
-  setting has_weapon to 0 if a ship fires its missiles and then has no other
-  weapon. Then check that both sides still have weapons at the start of each round of combat. If not, it's a stalemate; report that as a third type of sim result.
-- Don't just exit the program right away. Allow the user to change the number of
-  ships / equipped parts / number of sims and then rerun the simulation.
-- Are missiles being handled correctly? I don't remember whether I implemented
-  them correctly or not.
-- Make sure I'm managing Parts correctly (there's a list of Parts stored in each
-  instance of the ECS class and that list keeps track of whether each Part is
-  available but I generate Parts in other places as well.)
-- I saved the default_parts for each Hull as a list of Part objects. Is this
-  needlessly inefficient? There will be a lot of unneeded Part objects out there
-  this way... could just have it be a list of names instead. Actually, is this 
-  even true? Currently we make a list of Hulls, each of which has a list of
-  default parts. Then each individual Ship's Hull references the same object, so
-  I think it's actually not that inefficient.
-- Generally speaking, I think the way I'm handling objects is sloppy and leaves
-  the program open to errors in the future. Rethink this once I have it working
-  again.
-- Add more error-checking
+- Don't just exit the program right away. Allow the user to change the number of ships / equipped parts / number of sims and then rerun the simulation.
+- Are missiles being handled correctly? I don't remember whether I implemented them correctly or not.
 - Fix doc strings to be PEP8 compliant, do a general pass on style
-- kill_priority stat could stand to be improved (currently takes shield
-  into account when determining toughness, but shield isn't relevant if
-  opponents' ships have no hit bonus. Maybe opponent's ships should each
-  calculate kill_priority values for themselves? Then they could take into
-  account their own hit bonuses and initiative and damage output and so on.
-- At one point I got rid of the owner_id and owner_name attributes of the Ship
-  class and replaced them with self.owner (the Player object). In practice this
-  slows the code down by a factor of 100 or more. Use the profiler to figure out
-  what's going on.
+- kill_priority stat could stand to be improved (currently takes shield into account when determining toughness, but shield isn't relevant if opponents' ships have no hit bonus. Maybe opponent's ships should each calculate kill_priority values for themselves? Then they could take into account their own hit bonuses and initiative and damage output and so on.
+- At one point I got rid of the owner_id and owner_name attributes of the Ship class and replaced them with self.owner (the Player object). In practice this slows the code down by a factor of 100 or more. Use the profiler to figure out what's going on.
+- Generally speaking, make the combat algorithm much better. The goal is to do maximum damage while minimizing the return damage. This is the most complicated part of the

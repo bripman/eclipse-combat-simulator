@@ -29,7 +29,7 @@ def GetInput(prompt, desired_type):
             raise TypeError('Unsupported input type requested.')
     return response
 
-def GetStrInput(prompt, constrained=False, acceptable_strings=[]):
+def GetStr(prompt, constrained=False, acceptable_strings=[]):
     """Uses the supplied prompt to pester the user until they yield a string.
     If the constrained arg is True, only accepts input that is contained within
     the acceptable_strings list."""
@@ -38,12 +38,11 @@ def GetStrInput(prompt, constrained=False, acceptable_strings=[]):
         response = GetInput(prompt, str)
         if constrained and response not in acceptable_strings:
             print("That is not an acceptable answer.")
-            continue
         else:
             acceptable_input = True
     return response
 
-def GetIntInput(prompt, constrained=False, low_lim=0, high_lim=1):
+def GetInt(prompt, constrained=False, low_lim=0, high_lim=1):
     """Uses the supplied prompt to pester the user until they yield an integer.
     If the constrained arg is True, only accepts input that is >= low_lim and
     <= high_lim."""
@@ -52,7 +51,6 @@ def GetIntInput(prompt, constrained=False, low_lim=0, high_lim=1):
         response = GetInput(prompt, int)
         if constrained and (response < low_lim or response > high_lim):
             print("That is not an acceptable answer.")
-            continue
         else:
             acceptable_input = True
     return response
@@ -62,10 +60,10 @@ def main():
     print("\nHello world from user_input.py!\n")
 
     print("Let's try asking the user for some input.")
-    str_input1 = GetStrInput('Give me any string: ')
-    str_input2 = GetStrInput('Give me a decision (y or n): ', True, ['y', 'n'])
-    int_input1 = GetIntInput('Give me any integer: ')
-    int_input2 = GetIntInput('Give me a number between 1 and 10: ',
+    str_input1 = GetStr('Give me any string: ')
+    str_input2 = GetStr('Give me a decision (y or n): ', True, ['y', 'n'])
+    int_input1 = GetInt('Give me any integer: ')
+    int_input2 = GetInt('Give me a number between 1 and 10: ',
                              True, 1, 10)
 
 if __name__ == '__main__':

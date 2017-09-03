@@ -20,39 +20,31 @@ class ECS:
     players."""
     
     def __init__(self):
-        """Upon creation of an ECS object, the __init__function gets names
-        for each participating Player and constructs their fleets."""
         print("Welcome to the Eclipse Combat Simulator!")
         self.parts = part_def.Part.GetParts()
         self.hulls = hull_def.Hull.GetHulls()
-        self.players = self.SetupPlayers()
+        self.SetupPlayers()
         self.AssembleFleets()
         print("\nFinished with setup!")
         print("Here are the players participating in combat:")
         for player in self.players:
             print("\n", player)
         print()
-        self.sim_results = [0 for x in range(len(self.players))]
+        self.sim_results = [0] * (len(self.players) + 1)
+        # One column to record number of wins for each player
+        # and one final column to record the number of stalemates.
     
-    def SetupPlayers(self, nplayers=2):
-        """Gets names for each player participating in combat, creates & returns
-        a list of Player objects representing them. Currently only works with 2
-        players."""
-        if nplayers < 2:
-            raise RuntimeError("Number of players must be > 1!")
-        players = []
+    def SetupPlayers(self):
+        """Creates a Player object for each person participating in combat."""
+        nplayers = 2
+        self.players = []
         print("There are %i players participating in combat." % (nplayers))
         print("Player 1 is defending.")
-        if nplayers == 2:
-            print("Player 2 is attacking.")
-        else:
-            print("Players 2-%i are attacking and higher-numbered players \
-                    arrived in the system later." % (nplayers))
+        print("Player 2 is attacking.")
         for i in range(nplayers):
-            name = user_input.GetStrInput("Please enter player %i's name: "
+            name = user_input.GetStr("Please enter player %i's name: "
                                           % (i + 1))
-            players += [player_def.Player(name)]
-        return players
+            self.players.append(player_def.Player(name))
     
     def AssembleFleets(self):
         """Assembles a fleet for each Player. This involves determining the
@@ -67,19 +59,14 @@ class ECS:
                     # one who can have immobile Ships (e.g. the space station).
                     continue
                 hull = self.hulls[hull_name]
-                nships = user_input.GetIntInput(
+                nships = user_input.GetInt(
                     "How many %ss does %s have (%i-%i)? "
                     % (hull.name, player.name, 0, hull.nmax),
                     True, 0, hull.nmax)
                 if nships > 0:
                     print("Okay, let's build those %ss." % (hull.name))
-                    # First definet the prototype
+                    # First define the prototype
                     prototype = ship_def.Ship(hull, self.parts, player)
-                    # Then build nships duplicates of this prototype
-                    # player.fleet.append([
-                    #     ship_def.Ship(hull, self.parts, player,
-                    #     True, prototype.parts)
-                    #     for i in range(nships)])
                     for i in range(nships):
                         # Build nships duplicates of this prototype
                         player.fleet.append(
@@ -87,64 +74,73 @@ class ECS:
                             True, prototype.parts))
             # Finished creating Ships for this Player, now sort their fleet
             player.SortFleet()
-            print("Player %s has these ships:" % (player.name))
-            for ship in player.fleet:
-                print(ship)
     
     def RunSimulations(self):
-        """Runs a user-specified number of combat simulations between
-        Players. Currently hardcoded for 2 players."""
+        """Runs combat simulations between Players."""
         if len(self.players) != 2:
             raise RuntimeError(
                 "The ECS currently only supports 2 combatants. Sorry!")
-        nsims = user_input.GetIntInput(
+        defender = self.players[0]
+        attacker = self.players[1]
+        # Apply initiative bonus to the defending player.
+        for ship in defender.fleet:
+            ship.initiative += 0.5
+        nsims = user_input.GetInt(
             "How many combat sims should we run? ", True, 1, 1000000)
         sim_num = 0
-        # Apply initiative bonus to the defending player.
-        for ship in self.players[0].fleet:
-            ship.initiative += 0.5
         print("Running simulation!")
         while sim_num < nsims:
             # Each iteration here is a full combat simulation.
-            fleet1 = copy.deepcopy(self.players[0].fleet)
-            fleet2 = copy.deepcopy(self.players[1].fleet)
-            self.SimulateCombat(fleet1, fleet2, sim_num)
+            def_fleet = copy.deepcopy(defender.fleet)
+            atk_fleet = copy.deepcopy(attacker.fleet)
+            self.SimulateCombat(def_fleet, atk_fleet, sim_num)
             sim_num += 1
         print("Simulations complete.")
 
-    def SimulateCombat(self, fleet1, fleet2, sim_num):
-        while len(fleet1) > 0 and len(fleet2) > 0:
+    def SimulateCombat(self, def_fleet, atk_fleet, sim_num):
+        combat_round = 0
+        while (len(def_fleet) > 0 and
+               len(atk_fleet) > 0 and
+               combat_round < 1000):
             # Each iteration here represents a full round of combat.
-            # Combat continues until one fleet has been completely destroyed.
-            firing_seq = sorted(fleet1 + fleet2,
+            # Combat continues until a fleet has been completely destroyed
+            # or a stalemate has developed.
+            combat_round += 1
+            firing_seq = sorted(def_fleet + atk_fleet,
                 key=lambda ship: -ship.initiative)
-            while len(firing_seq) > 0 and len(fleet1) > 0 and len(fleet2) > 0:
+            while (len(firing_seq) > 0 and
+                   len(def_fleet) > 0 and
+                   len(atk_fleet) > 0):
                 # During each iteration here a group of Ships with identical
                 # initiative values fire and are then removed from the
                 # firing_seq. Note: we can assume that they are all controlled
                 # by the same Player due to how initiative works (defending
                 # Player has fractional initiative & attacking Player does not).
                 firing_now = [firing_seq.pop(0)]             
-                while len(firing_seq) > 0 and \
-                           firing_seq[0].initiative == firing_now[0].initiative:
+                while (len(firing_seq) > 0 and
+                       firing_seq[0].initiative == firing_now[0].initiative):
                     firing_now.append(firing_seq.pop(0))
                 # At this point, firing_now contains all Ships with the highest
-                # intiative value that have not yet fired this round. Now they
-                # attack simultaneously. 
-                attacks = [ship.RollAttacks() for ship in firing_now
+                # initiative value that have not yet fired this round. Now they
+                # roll their attacks simultaneously. 
+                attacks = [ship.RollAttacks()
+                           for ship in firing_now
                            if ship.has_weapon]
-                if firing_now[0].owner.id == fleet1[0].owner.id:
-                    # The attacking ships belong to fleet1, so fire at fleet2
-                    self.MakeAttacks(attacks, firing_seq, fleet2)
+                if firing_now[0].owner.id == def_fleet[0].owner.id:
+                    # Fire at the attacking fleet
+                    self.MakeAttacks(attacks, firing_seq, atk_fleet)
                 else:
-                    # The attacking ships belong to fleet2, so fire at fleet1
-                    self.MakeAttacks(attacks, firing_seq, fleet1)
-        if len(fleet1) < 1:
+                    # Fire at the defending fleet
+                    self.MakeAttacks(attacks, firing_seq, def_fleet)
+        if len(def_fleet) < 1:
             print("Player 2 wins simulation %i" % (sim_num + 1))
             self.sim_results[1] += 1
-        else:
+        elif len(atk_fleet) < 1:
             print("Player 1 wins simulation %i" % (sim_num + 1))
             self.sim_results[0] += 1
+        else:
+            print("Simulation %i ended in a stalemate" % (sim_num + 1))
+            self.sim_results[-1] += 1
         return
     
     def MakeAttacks(self, attacks, firing_seq, opposing_fleet):
@@ -202,9 +198,13 @@ class ECS:
         else:
             print("\nHere are the simulation results:")
             for i in range(len(self.players)):
-                print("%s won %i times (%.2f%% probability of victory)" \
+                print("%s won %i times (%.2f%% probability)" \
                       % (self.players[i].name, self.sim_results[i], \
                       100. * self.sim_results[i] / nsims_completed))
+            if self.sim_results[-1] > 0:
+                print("There were %i stalemates (%.2f%% probability)" \
+                      % (self.sim_results[-1], \
+                      100. * self.sim_results[-1] / nsims_completed))
 
 def main():
     """Creates a new instance of ECS, runs the combat simulation, and

@@ -103,7 +103,7 @@ def SelectPart(parts, slot_num):
     for i in range(len(available_parts)):
         print("%2i -" %(i + 1), parts[available_parts[i]].name)
         time.sleep(0.01)
-    selected_part = user_input.GetIntInput(
+    selected_part = user_input.GetInt(
             "\nWhich part would you like to equip in slot %i? " % (slot_num),
             True, 1, len(available_parts))
     part_name = parts[available_parts[selected_part - 1]].name
