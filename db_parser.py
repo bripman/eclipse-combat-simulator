@@ -58,38 +58,6 @@ def GetTableAsDict(table_name):
         items.append(dict(zip(keys, item)))
     return items
 
-def GetHullLoadouts():
-    """Retrieves the default loadouts for each Hull in the ECS database and
-    returns them as a dictionary where each key is a Hull name and indexes a
-    list of Part names."""
-    loadouts = {}
-    loadout_table = GetTableAsDict('loadout')
-    for item in loadout_table:
-        if item['hull_name'] not in loadouts.keys():
-            loadouts[item['hull_name']] = []
-        loadouts[item['hull_name']].append(item['part_name'])
-    return loadouts
-
-def GetHulls():
-    """Retrieves information about all Hulls in the ECS database and returns it
-    as a dictionary of dictionaries where the outer dict keys index different
-    Hulls and the inner dict keys index each Hull's characteristics."""
-    hulls = {}
-    hull_table = GetTableAsDict('hull')
-    loadouts = GetHullLoadouts()
-    for hull in hull_table:
-        # Make a new nested dictionary indexed by this hull's name
-        name = hull['hull_name']
-        hulls[name] = {}
-        for key in hull.keys():
-            if key == 'hull_name':
-                pass
-            else:
-                hulls[name][key] = hull[key]
-        # Now add this hull's loadout to its dictionary
-        hulls[name]['loadout'] = loadouts[name]
-    return hulls
-
 def main():
     """Tests various functions defined in db_parser."""
     print("\nHello world from db_parser.py!\n")

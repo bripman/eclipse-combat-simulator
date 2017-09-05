@@ -12,10 +12,10 @@ import time
 
 class Part:
     """The Part class contains all of the attributes associated with a
-    modular piece of equipment in the game Eclipse. These Parts are placed
-    in slots on Ships and modify their attributes. Note that there is potential
-    for name confusion here since the in-game characteristic "hull" is referred
-    to as "armor" in all ECS code."""
+    modular piece of equipment in the game Eclipse. These parts are placed
+    in equipment slots on ships and modify their attributes. Note that there is
+    potential for name confusion here since the in-game characteristic "hull"
+    is referred to as "armor" in all ECS code."""
     
     def __init__(self, name='<Empty Slot>', damage=0, nshots=0, power=0,
                  armor=0, shield=0, hit_bonus=0, initiative=0, is_weapon=0,
@@ -31,11 +31,11 @@ class Part:
         self.is_weapon = is_weapon # Is this a weapon?
         self.is_missile = is_missile # Is this a missile launcher?
         self.is_drive = is_drive # Is this a drive?
-        self.is_ancient = is_ancient # Is this an ancient Part?
-        self.is_available = is_available # Some Parts have a finite supply
+        self.is_ancient = is_ancient # Is this an ancient part?
+        self.is_available = is_available # Some parts have a finite supply
     
     def __str__(self):
-        """Returns a verbose description of the Part."""
+        """Returns a verbose description of the part."""
         description = "-- %s --" % (self.name)
         description += "\ndamage = %i" % (self.damage)
         description += "\nnshots = %i" % (self.nshots)
@@ -53,7 +53,7 @@ class Part:
 
     @staticmethod
     def GetParts():
-        """Returns a dictionary whose keys are Part names indexing all Part
+        """Returns a dictionary whose keys are part names indexing all part
         objects available to the ECS."""
         parts = {}
         part_attributes = Part.GetPartAttributes()
@@ -75,14 +75,14 @@ class Part:
 
     @staticmethod
     def GetPartAttributes():
-        """Retrieves information about all available Parts from the ECS SQLite
+        """Retrieves information about all available parts from the ECS SQLite
         database and returns it as a dictionary of dictionaries where the outer
-        dict keys are Part names and the inner dict keys are attribute names
-        indexing each Part's attribute values."""
+        dict keys are part names and the inner dict keys are attribute names
+        indexing each part's attribute values."""
         parts = {}
         part_table = db_parser.GetTableAsDict('part')
         for row in part_table:
-            # Make a new nested dictionary indexed by this Part's name
+            # Make a new nested dictionary indexed by this part's name
             part_name = row['part_name']
             parts[part_name] = {}
             for key in row.keys():
@@ -93,10 +93,10 @@ class Part:
         return parts
 
 def SelectPart(parts, slot_num):
-    """Displays a list of Parts to the user so that they can select a Part to
-    equip to a Ship. The parts argument must be in the same format as the output
-    from the GetParts static method of the Part class. Returns the name of the
-    selected Part as a string."""
+    """Displays a list of parts to the user so that they can select a part to
+    equip to a ship. The parts argument must be in the same format as the output
+    from the GetParts static method of the part class. Returns the name of the
+    selected part as a string."""
     available_parts = \
         [key for key in sorted(parts.keys()) if parts[key].is_available]
     print("\nAvailable parts:")

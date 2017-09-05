@@ -1,7 +1,7 @@
 To do:
-- Don't just exit the program right away. Allow the user to change the number of ships / equipped parts / number of sims and then rerun the simulation.
-- Are missiles being handled correctly? I don't remember whether I implemented them correctly or not.
+- Change MakeAttacks function so that it pops ships from the end of firing_seq. I think that'll speed things up.
+- Possibly change MakeAttacks so that it doesn't evaluate the if statement conditions on every iteration through the while loop.
 - Fix doc strings to be PEP8 compliant, do a general pass on style
-- kill_priority stat could stand to be improved (currently takes shield into account when determining toughness, but shield isn't relevant if opponents' ships have no hit bonus. Maybe opponent's ships should each calculate kill_priority values for themselves? Then they could take into account their own hit bonuses and initiative and damage output and so on.
 - At one point I got rid of the owner_id and owner_name attributes of the Ship class and replaced them with self.owner (the Player object). In practice this slows the code down by a factor of 100 or more. Use the profiler to figure out what's going on.
-- Generally speaking, make the combat algorithm much better. The goal is to do maximum damage while minimizing the return damage. This is the most complicated part of the
+- kill_priority stat could stand to be improved (currently takes shield into account when determining toughness, but shield isn't relevant if opponents' ships have no hit bonus. Maybe opponent's ships should each calculate kill_priority values for themselves? Then they could take into account their own hit bonuses and initiative and damage output and so on.
+- Generally speaking, make the combat algorithm much better. The goal is to do maximum damage while minimizing the return damage. This is the most complicated part of the program so I'm putting it off.

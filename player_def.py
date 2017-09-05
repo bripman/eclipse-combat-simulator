@@ -10,10 +10,9 @@ import ship_def
 import hull_def
 
 class Player:
-    """The Player class stores all relevant information about a participant
-    in an Eclipse fleet battle and defines methods for managing a Player's
-    fleet."""
-    players = 0 # Used to tag each Player with a unique ID
+    """The Player class stores all relevant information about a player
+    in an Eclipse fleet battle and defines methods for managing their fleet."""
+    players = 0 # Used to tag each player with a unique ID
     
     def __init__(self, name):
         self.id = Player.players
@@ -22,7 +21,7 @@ class Player:
         self.fleet = []
 
     def __str__(self):
-        """Returns a verbose description of the Player."""
+        """Returns a verbose description of the player."""
         description = "-------- %s --------" % (self.name)
         description += "\n%s's id: %i" % (self.name, self.id)
         description += "\n%s's fleet contains:" % (self.name)
@@ -36,11 +35,6 @@ class Player:
             description += "\n%i %ss" % (ships[key], key)
         description += "\n(%i ships total)" % (len(self.fleet))
         return description
-
-    def SortFleet(self):
-        """Sorts the ships in the Player's fleet by descending kill priority.
-        The combat algorithm relies on fleets being sorted in this way."""
-        self.fleet = sorted(self.fleet, key=lambda ship: -ship.kill_priority)
     
 def main():
     """Tests various functions defined in player_def."""
