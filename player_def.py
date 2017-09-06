@@ -19,6 +19,7 @@ class Player:
         Player.players += 1
         self.name = name
         self.fleet = []
+        self.is_defending = 0
 
     def __str__(self):
         """Returns a verbose description of the player."""

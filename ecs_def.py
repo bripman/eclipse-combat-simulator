@@ -31,8 +31,8 @@ class ECS:
             print("\n", player)
         print()
         self.sim_results = [0] * (len(self.players) + 1)
-        # One column to record number of wins for each player
-        # and one final column to record the number of stalemates.
+        # One column to record the number of wins for each player and one final
+        # column to record the number of stalemates.
     
     def SetupPlayers(self):
         """Creates a Player object for each person participating in combat."""
@@ -45,6 +45,7 @@ class ECS:
             name = user_input.GetStr("Please enter player %i's name: "
                                           % (i + 1))
             self.players.append(player_def.Player(name))
+        self.players[0].is_defending = 1
     
     def AssembleFleets(self):
         """Assembles a fleet for each player. This involves determining the
@@ -53,9 +54,10 @@ class ECS:
         for player in self.players:
             print("Let's build %s's fleet." % (player.name))
             for hull_name in self.hulls.keys():
-                if self.hulls[hull_name].is_mobile == 0 and player.id != 0:
-                    # The Player with ID 0 is the defender; they are the only
-                    # one who can have immobile Ships (e.g. the space station).
+                if (self.hulls[hull_name].is_mobile == 0 and not
+                        player.is_defending):
+                    # The defending player is the only one who can have immobile
+                    # ships (e.g. the Space Station).
                     continue
                 hull = self.hulls[hull_name]
                 nships = user_input.GetInt(
@@ -71,8 +73,8 @@ class ECS:
                         player.fleet.append(
                             ship_def.Ship(hull, self.parts, player,
                             True, prototype.parts))
-            # Finished creating Ships for this Player, now sort their fleet
-#            player.SortFleet()
+            # Sort the fleet by descending kill_priority. The combat algorithm
+            # currently relies on this, which is kludgey.
             player.fleet = sorted(
                 player.fleet, key=lambda ship: -ship.kill_priority)
     
@@ -83,9 +85,6 @@ class ECS:
                 "The ECS currently only supports 2 combatants. Sorry!")
         defender = self.players[0]
         attacker = self.players[1]
-        # Apply initiative bonus to the defending player.
-        for ship in defender.fleet:
-            ship.initiative += 0.5
         nsims = user_input.GetInt(
             "How many combat sims should we run? ", True, 1, 1000000)
         sim_num = 0
@@ -103,11 +102,8 @@ class ECS:
         beginning to end."""
         # Begin combat by resolving missile attacks
         self.RollAttacks(def_fleet, atk_fleet, False, True)
-        # Have to re-apply the initiative bonus here because it
-        # gets reset after firing missiles. Super kludgey.
-        for ship in def_fleet:
-            ship.initiative += 0.5
-        # Now have to re-sort both fleets since kill_priority may have changed.
+        # Now have to re-sort both fleets since kill_priority may have changed
+        # when missile weapons were exhausted.
         def_fleet = sorted(
                 def_fleet, key=lambda ship: -ship.kill_priority)
         atk_fleet = sorted(
@@ -136,7 +132,7 @@ class ECS:
                      firing_missiles = False):
         """Makes attacks for all ships in combat."""
         firing_seq = sorted(def_fleet + atk_fleet,
-            key=lambda ship: -ship.initiative)
+            key=lambda ship: ship.initiative)
         while (len(firing_seq) > 0 and
                len(def_fleet) > 0 and
                len(atk_fleet) > 0):
@@ -145,10 +141,10 @@ class ECS:
             # firing_seq. Note: we can assume that they are all controlled
             # by the same Player due to how initiative works (defending
             # Player has fractional initiative & attacking Player does not).
-            firing_now = [firing_seq.pop(0)]             
+            firing_now = [firing_seq.pop()]             
             while (len(firing_seq) > 0 and
-                   firing_seq[0].initiative == firing_now[0].initiative):
-                firing_now.append(firing_seq.pop(0))
+                   firing_seq[-1].initiative == firing_now[-1].initiative):
+                firing_now.append(firing_seq.pop())
             # At this point, firing_now contains all Ships with the highest
             # initiative value that have not yet fired. Now they roll their
             # attacks simultaneously.
@@ -162,8 +158,9 @@ class ECS:
                 # What the hell are we supposed to be firing?
                 print("RollAttacks called with bad args!")
                 continue
-            # Remove all the None values from ships that didn't make any attacks
+            # Remove any None values from ships that didn't make any attacks
             attacks = [x for x in attacks if x != None]
+            # Then unpack all of the lists of tuples into one list
             attacks = [x for y in attacks for x in y]
             if len(attacks) == 0:
                 # No attacks to make so we're finished

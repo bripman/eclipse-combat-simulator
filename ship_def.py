@@ -103,6 +103,10 @@ class Ship:
         self.shield = 0
         self.hit_bonus = 0
         self.initiative = self.hull.bonus_initiative
+        if self.owner.is_defending:
+            # The defending player goes first when initiative is tied. Simplest
+            # way to implement that is with a fractional bump.
+            self.initiative += 0.5
         self.has_drive = 0
         self.has_weapon = 0
         # Integrate
@@ -133,7 +137,7 @@ class Ship:
         # Set kill_priority to the ship's expected damage output per round
         self.kill_priority = self.net_damage * (1 + self.hit_bonus) / 6.0
         # Then reduce it by a factor proportional to the ship's toughness
-        self.kill_priority /= self.armor * (4 + self.shield) / 6.0
+        self.kill_priority /= self.armor
 
     def Verify(self):
         """Verify that this ship is shipshape, as it were."""
