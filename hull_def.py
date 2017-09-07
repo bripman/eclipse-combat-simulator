@@ -2,9 +2,11 @@
 """hull_def.py -- Defines the Hull class, which is used by the Eclipse
 Combat Simulator. Has debugging functionality if called as __main__."""
 
+import time
+
 import db_parser
 import part_def
-import time
+
 
 class Hull:
     """The Hull class contains all the basic, immutable characteristics
@@ -13,14 +15,14 @@ class Hull:
     def __init__(self, name='Undefined Hull', nmax=0, nslots=0, bonus_power=0, 
                  bonus_initiative=0., needs_drive=1, is_mobile=1,
                  default_parts=[]):
-        self.name = name # Name of this hull type
+        self.name = name
         self.nmax = nmax # Max number that a player may build
-        self.nslots = nslots # Number of module slots
-        self.bonus_power = bonus_power # Bonus power supply
-        self.bonus_initiative = bonus_initiative # Bonus initiative
-        self.needs_drive = needs_drive # Is a drive part required?
-        self.is_mobile = is_mobile # Is it mobile?
-        self.default_parts = default_parts # List of default parts for this Hull
+        self.nslots = nslots # Number of slots for equipping parts
+        self.bonus_power = bonus_power
+        self.bonus_initiative = bonus_initiative
+        self.needs_drive = needs_drive
+        self.is_mobile = is_mobile
+        self.default_parts = default_parts # Default part loadout
 
     def __str__(self):
         """Returns a verbose description of the hull."""
@@ -93,6 +95,7 @@ class Hull:
             loadouts[row['hull_name']].append(row['part_name'])
         return loadouts
 
+
 def main():
     """Tests various functions defined in hull_def."""
     print("\nHello world from hull_def.py\n")
@@ -103,6 +106,7 @@ def main():
         time.sleep(0.01)
     print("\n^ These are all the hulls I can make.")
     print("Total number of hulls = %i" % (len(all_hulls))) 
+
 
 if __name__ == '__main__':
     main()

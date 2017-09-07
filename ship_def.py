@@ -5,12 +5,15 @@ Simulator. Has debugging functionality if called as __main__."""
 import sys
 import os
 import random
-if __name__ != '__main__':
-    sys.path.insert(0, os.path.split(__file__)[0])
+
 import part_def
 import hull_def
 import user_input
 import player_def
+
+if __name__ != '__main__':
+    sys.path.insert(0, os.path.split(__file__)[0])
+
 
 class Ship:
     """The Ship class represents a ship in Eclipse. Note that there is
@@ -167,7 +170,7 @@ class Ship:
         # Confirm that the ship doesn't have more empty slots than are in
         # the default loadout. (You can't actually add empty slots to a ship.)
         empty_slots = sum(part.name == '<Empty Slot>' for part in self.parts)
-        empty_slots_allowed = sum(part.name == '<Empty Slot>' \
+        empty_slots_allowed = sum(part.name == '<Empty Slot>'
                                   for part in self.hull.default_parts)
         if empty_slots > empty_slots_allowed:
             print("***--> Design flaw: too many empty slots.")
@@ -196,8 +199,8 @@ class Ship:
 
     def __str__(self):
         """Returns a verbose description of the ship."""
-        description = "---- %s ----\n(owned by %s)" \
-            % (self.hull.name, self.owner.name)
+        description = ("---- %s ----\n(owned by %s)"
+                       % (self.hull.name, self.owner.name))
         description += "\n----------------------"
         description += "\nEquipped parts:"
         for part in self.parts:
@@ -247,6 +250,7 @@ class Ship:
                         (random.randint(1, 6), self.hit_bonus, part.damage))
         return attacks
 
+
 def main():
     """Tests various functions defined in ship_def."""
     print("\nHello world from ship_def.py!\n")
@@ -266,6 +270,7 @@ def main():
     print("Missile attacks: ", attacks)
     attacks = new_ship.RollConventionalAttacks()
     print("Conventional attacks: ", attacks)
-    
+
+
 if __name__ == '__main__':
     main()

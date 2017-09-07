@@ -5,6 +5,7 @@ Has debugging functionality if called as __main__."""
 import sqlite3
 import time
 
+
 def QueryDB(table_name, db_name, query):
     """Executes an SQLite database query. Currently insecure against injection
     attacks a la https://xkcd.com/327/ since the query parameter can't be
@@ -22,6 +23,7 @@ def QueryDB(table_name, db_name, query):
         conn.close()
     return output
 
+
 def CleanString(string):
     """Sanitizes a string, making it suitable for use as input for SQLite
     commands."""
@@ -33,6 +35,7 @@ def CleanString(string):
         print("*** An exception occured in CleanString! ***")
     return clean_string
 
+
 def GetTableAttrs(table_name, db_name='ecs.sqlite3'):
     """Returns a list of all attribute names for entities in a table in the ECS
     database."""
@@ -41,22 +44,26 @@ def GetTableAttrs(table_name, db_name='ecs.sqlite3'):
     attr_names = [pragma[1] for pragma in pragma_output]
     return attr_names
 
+
 def GetTableContents(table_name, db_name='ecs.sqlite3'):
     """Retrieves the contents of a table in the ECS database."""
     query = 'SELECT * FROM %s' % (table_name)
     table_contents = QueryDB(table_name, db_name, query)
     return table_contents
 
+
 def GetTableAsDict(table_name):
-    """Retrieves the contents of a table in the ECS database and returns it as a
-    list of dictionaries. Each dictionary in this list represents a row of data
-    and has the table's attribute names as keys indexing attribute values."""
+    """Retrieves the contents of a table in the ECS database and returns it as
+    a list of dictionaries. Each dictionary in this list represents a row of
+    data and has the table's attribute names as keys indexing attribute
+    values."""
     items = []
     keys = GetTableAttrs(table_name)
     item_table = GetTableContents(table_name)
     for item in item_table:
         items.append(dict(zip(keys, item)))
     return items
+
 
 def main():
     """Tests various functions defined in db_parser."""
@@ -81,6 +88,7 @@ def main():
         print(item)
         time.sleep(0.01)
     print("\n^ Here is the formatted content of the hull table.")
+
 
 if __name__ == '__main__':
     main()

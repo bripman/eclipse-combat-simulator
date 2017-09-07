@@ -2,6 +2,7 @@
 """user_input.py -- Contains the GetInput function. Has debugging
 functionality if called as __main__."""
 
+
 def GetInput(prompt, desired_type):
     """Uses the supplied prompt to pester the user until they give input of
     the desired type."""
@@ -29,6 +30,7 @@ def GetInput(prompt, desired_type):
             raise TypeError('Unsupported input type requested.')
     return response
 
+
 def GetStr(prompt, constrained=False, acceptable_strings=[]):
     """Uses the supplied prompt to pester the user until they yield a string.
     If the constrained arg is True, only accepts input that is contained within
@@ -42,6 +44,7 @@ def GetStr(prompt, constrained=False, acceptable_strings=[]):
             acceptable_input = True
     return response
 
+
 def GetInt(prompt, constrained=False, low_lim=0, high_lim=1):
     """Uses the supplied prompt to pester the user until they yield an integer.
     If the constrained arg is True, only accepts input that is >= low_lim and
@@ -54,7 +57,8 @@ def GetInt(prompt, constrained=False, low_lim=0, high_lim=1):
         else:
             acceptable_input = True
     return response
-    
+
+
 def main():
     """Tests various functions defined in user_input."""
     print("\nHello world from user_input.py!\n")
@@ -65,6 +69,7 @@ def main():
     int_input1 = GetInt('Give me any integer: ')
     int_input2 = GetInt('Give me a number between 1 and 10: ',
                              True, 1, 10)
+
 
 if __name__ == '__main__':
     main()

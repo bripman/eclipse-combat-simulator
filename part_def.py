@@ -4,11 +4,14 @@ Simulator. Has debugging functionality if called as _main__."""
 
 import sys
 import os
-if __name__ != '__main__':
-    sys.path.insert(0, os.path.split(__file__)[0])
+import time
+
 import db_parser
 import user_input
-import time
+
+if __name__ != '__main__':
+    sys.path.insert(0, os.path.split(__file__)[0])
+
 
 class Part:
     """The Part class contains all of the attributes associated with a
@@ -21,18 +24,18 @@ class Part:
                  armor=0, shield=0, hit_bonus=0, initiative=0, is_weapon=0,
                  is_missile=0, is_drive=0, is_ancient=0, is_available=1):
         self.name = name
-        self.damage = damage # How much damage this does
+        self.damage = damage # How much damage this does per shot
         self.nshots = nshots # Number of shots per round
-        self.power = power # How much power this supplies (+) or consumes (-)
-        self.armor = armor # How much armor this provides
-        self.shield = shield # Shield bonus provided
+        self.power = power # Power supplied (+) or consumed (-)
+        self.armor = armor # Armor provided
+        self.shield = shield # Shield provided
         self.hit_bonus = hit_bonus # Hit bonus provided
         self.initiative = initiative # Initiative bonus provided
-        self.is_weapon = is_weapon # Is this a weapon?
-        self.is_missile = is_missile # Is this a missile launcher?
-        self.is_drive = is_drive # Is this a drive?
-        self.is_ancient = is_ancient # Is this an ancient part?
-        self.is_available = is_available # Some parts have a finite supply
+        self.is_weapon = is_weapon
+        self.is_missile = is_missile
+        self.is_drive = is_drive
+        self.is_ancient = is_ancient
+        self.is_available = is_available
     
     def __str__(self):
         """Returns a verbose description of the part."""
@@ -92,11 +95,12 @@ class Part:
                     parts[part_name][key] = row[key]
         return parts
 
+
 def SelectPart(parts, slot_num):
     """Displays a list of parts to the user so that they can select a part to
-    equip to a ship. The parts argument must be in the same format as the output
-    from the GetParts static method of the part class. Returns the name of the
-    selected part as a string."""
+    equip to a ship. The parts argument must be in the same format as the
+    output from the GetParts static method of the part class. Returns the name
+    of the selected part as a string."""
     available_parts = \
         [key for key in sorted(parts.keys()) if parts[key].is_available]
     print("\nAvailable parts:")
@@ -108,6 +112,7 @@ def SelectPart(parts, slot_num):
             True, 1, len(available_parts))
     part_name = parts[available_parts[selected_part - 1]].name
     return part_name
+
 
 def main():
     """Tests various functions defined in part_def."""
@@ -125,6 +130,7 @@ def main():
     parts = Part.GetParts()
     part_name = SelectPart(parts, 1)
     print("You chose to equip the %s." % (part_name))
+
 
 if __name__ == '__main__':
     main()
