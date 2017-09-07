@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-"""player_def.py -- Defines the Player class, which is used by the Eclipse
-Combat Simulator. Has debugging functionality if called as __main__."""
+"""player.py -- Defines the Player class, which is used by the Eclipse
+Combat Simulator. Has debugging functionality if called as __main__.
+"""
 
 import sys
 import os
 
-import ship_def
-import hull_def
+import ship
+import hull
 
 
 class Player:
     """The Player class stores all relevant information about a player
-    in an Eclipse fleet battle and defines methods for managing their fleet."""
+    in an Eclipse fleet battle and defines methods for managing their
+    fleet.
+    """
+
     players = 0 # Used to tag each player with a unique ID
-    
+
     def __init__(self, name):
         self.id = Player.players
         Player.players += 1
@@ -27,27 +31,28 @@ class Player:
         description += "\n%s's id: %i" % (self.name, self.id)
         description += "\n%s's fleet contains:" % (self.name)
         ships = {}
-        for ship in self.fleet:
-            if ship.hull.name not in ships.keys():
-                ships[ship.hull.name] = 1
+        for a_ship in self.fleet:
+            if a_ship.hull.name not in ships.keys():
+                ships[a_ship.hull.name] = 1
             else:
-                ships[ship.hull.name] += 1
+                ships[a_ship.hull.name] += 1
         for key in ships.keys():
             description += "\n%i %ss" % (ships[key], key)
         description += "\n(%i ships total)" % (len(self.fleet))
         return description
 
-    def SortFleet(self):
-        """Sort the player's fleet by descending kill_priority. The combat
-        algorithm currently relies on this, which is a bit kludgey."""
+    def sort_fleet(self):
+        """Sort the player's fleet by descending kill_priority. The
+        combat algorithm currently relies on this, which is a bit
+        kludgey.
+        """
         self.fleet = \
-            sorted(self.fleet, key=lambda ship: -ship.kill_priority)
-
+            sorted(self.fleet, key=lambda a_ship: -a_ship.kill_priority)
 
 
 def main():
-    """Tests various functions defined in player_def."""
-    print("\nHello world from player_def.py!\n")
+    """Tests various functions defined in player."""
+    print("\nHello world from player.py!\n")
     
     print("Let's try making a player.")
     new_player = Player('Ben')

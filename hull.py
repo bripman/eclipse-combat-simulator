@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""hull_def.py -- Defines the Hull class, which is used by the Eclipse
-Combat Simulator. Has debugging functionality if called as __main__."""
+"""hull.py -- Defines the Hull class, which is used by the Eclipse
+Combat Simulator. Has debugging functionality if called as __main__.
+"""
 
 import time
 
 import db_parser
-import part_def
+import part
 
 
 class Hull:
     """The Hull class contains all the basic, immutable characteristics
-    of a ship chassis in Eclipse."""
+    of a ship chassis in Eclipse.
+    """
     
     def __init__(self, name='Undefined Hull', nmax=0, nslots=0, bonus_power=0, 
                  bonus_initiative=0., needs_drive=1, is_mobile=1,
@@ -39,12 +41,13 @@ class Hull:
         return description
 
     @staticmethod
-    def GetHulls():
-        """Returns a dictionary whose keys are hull names indexing all hull
-        objects available to the ECS."""
+    def get_hulls():
+        """Returns a dictionary whose keys are hull names indexing all
+        hull objects available to the ECS.
+        """
         hulls = {}
-        hull_attributes = Hull.GetHullAttributes()
-        all_parts = part_def.Part.GetParts()
+        hull_attributes = Hull.get_hull_attributes()
+        all_parts = part.Part.get_parts()
         for hull_name in hull_attributes.keys():
             default_parts = []
             for part_name in hull_attributes[hull_name]['loadout']:
@@ -61,14 +64,16 @@ class Hull:
         return hulls
 
     @staticmethod
-    def GetHullAttributes():
-        """Retrieves information about all available hulls from the ECS SQLite
-        database and returns it as a dictionary of dictionaries where the outer
-        dict keys are hull names and the inner dict keys are attribute names
-        indexing each hull's attribute values."""
+    def get_hull_attributes():
+        """Retrieves information about all available hulls from the ECS
+        SQLite database and returns it as a dictionary of dictionaries
+        where the outer dict keys are hull names and the inner dict
+        keys are attribute names indexing each hull's attribute
+        values.
+        """
         hulls = {}
-        hull_table = db_parser.GetTableAsDict('hull')
-        hull_loadouts = Hull.GetHullLoadouts()
+        hull_table = db_parser.get_table_as_dict('hull')
+        hull_loadouts = Hull.get_hull_loadouts()
         for row in hull_table:
             # Make a new nested dictionary indexed by this hull's name
             hull_name = row['hull_name']
@@ -83,12 +88,13 @@ class Hull:
         return hulls
 
     @staticmethod
-    def GetHullLoadouts():
-        """Retrieves the default loadouts for each hull from the ECS SQLite
-        database and returns them as a dictionary where each key is a hull name
-        indexing a list of part names."""
+    def get_hull_loadouts():
+        """Retrieves the default loadouts for each hull from the ECS
+        SQLite database and returns them as a dictionary where each key
+        is a hull name indexing a list of part names.
+        """
         loadouts = {}
-        loadout_table = db_parser.GetTableAsDict('loadout')
+        loadout_table = db_parser.get_table_as_dict('loadout')
         for row in loadout_table:
             if row['hull_name'] not in loadouts.keys():
                 loadouts[row['hull_name']] = []
@@ -97,10 +103,10 @@ class Hull:
 
 
 def main():
-    """Tests various functions defined in hull_def."""
-    print("\nHello world from hull_def.py\n")
+    """Tests various functions defined in hull."""
+    print("\nHello world from hull.py\n")
 
-    all_hulls = Hull.GetHulls()
+    all_hulls = Hull.get_hulls()
     for key in all_hulls.keys():
         print(all_hulls[key], "\n")
         time.sleep(0.01)
