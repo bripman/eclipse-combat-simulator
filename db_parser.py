@@ -71,7 +71,7 @@ def get_table_as_dict(table_name):
 
 
 def main():
-    """Tests various functions defined in db_parser."""
+    """Tests various functions defined in this module."""
     print("\nHello world from db_parser.py!\n")
 
     attribute_names = get_table_attrs('hull')

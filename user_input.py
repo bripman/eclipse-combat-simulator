@@ -64,7 +64,7 @@ def get_int(prompt, constrained=False, low_lim=0, high_lim=1):
 
 
 def main():
-    """Tests various functions defined in user_input."""
+    """Tests various functions defined in this module."""
     print("\nHello world from user_input.py!\n")
 
     print("Let's try asking the user for some input.")

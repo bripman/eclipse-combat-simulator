@@ -12,6 +12,7 @@ import hull
 import ship
 import part
 import user_input
+import scoreboard
 
 if __name__ != '__main__':
     sys.path.insert(0, os.path.split(__file__)[0])
@@ -19,9 +20,8 @@ if __name__ != '__main__':
 
 class ECS:
     """The ECS (Eclipse Combat Simulator) class simulates fleet combat
-    between players in the 4X board game "Eclipse" and empirically
-    determines the odds of each player emerging victorious. Currently
-    only works with two players.
+    between two players in the 4X board game "Eclipse" and empirically
+    determines the odds of each player emerging victorious.
     """
     
     def __init__(self):
@@ -30,14 +30,13 @@ class ECS:
         self.hulls = hull.Hull.get_hulls()
         self.setup_players()
         self.assemble_fleets()
+        self.scoreboard = scoreboard.Scoreboard(
+            self.players[0], self.players[1])
         print("\nFinished with setup!")
         print("Here are the players participating in combat:")
         for a_player in self.players:
             print("\n", a_player)
         print()
-        self.sim_results = [0] * (len(self.players) + 1)
-        # One column to record the number of wins for each player and
-        # one final column to record the number of stalemates.
 
     def setup_players(self):
         """Creates a Player object for each person participating in
@@ -122,14 +121,14 @@ class ECS:
             self.roll_attacks(defender, attacker)
             combat_round += 1
         if len(defender.fleet) < 1:
+            self.scoreboard.record_victory(attacker)
             print("Player 2 wins simulation %i" % (sim_num))
-            self.sim_results[1] += 1
         elif len(attacker.fleet) < 1:
+            self.scoreboard.record_victory(defender)
             print("Player 1 wins simulation %i" % (sim_num))
-            self.sim_results[0] += 1
         else:
+            self.scoreboard.record_stalemate()
             print("Simulation %i ended in a stalemate" % (sim_num))
-            self.sim_results[-1] += 1
 
     def roll_attacks(self, defender, attacker,
                      firing_conventionals = True,
@@ -235,22 +234,6 @@ class ECS:
                 del firing_seq[i]
                 break
 
-    def report_results(self):
-        """Reports the simulation results to the user."""
-        nsims_completed = sum(self.sim_results)
-        if nsims_completed == 0:
-            print("No simulations have been run yet!")
-        else:
-            print("\nHere are the simulation results:")
-            for i in range(len(self.players)):
-                print("%s won %i times (%.2f%% probability)"
-                      % (self.players[i].name, self.sim_results[i],
-                      100. * self.sim_results[i] / nsims_completed))
-            if self.sim_results[-1] > 0:
-                print("There were %i stalemates (%.2f%% probability)"
-                      % (self.sim_results[-1],
-                      100. * self.sim_results[-1] / nsims_completed))
-
 
 def main():
     """Creates a new instance of ECS, runs the combat simulation, and
@@ -258,8 +241,8 @@ def main():
     """
     sim = ECS()
     sim.run_simulations()
-    sim.report_results()
-    print("Thank you for using the ECS!\n")
+    print(sim.scoreboard)
+    print("\nThank you for using the ECS!\n")
 
 
 if __name__ == '__main__':

@@ -103,7 +103,7 @@ class Hull:
 
 
 def main():
-    """Tests various functions defined in hull."""
+    """Tests various functions defined in this module."""
     print("\nHello world from hull.py\n")
 
     all_hulls = Hull.get_hulls()

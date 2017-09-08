@@ -9,6 +9,9 @@ import os
 import ship
 import hull
 
+if __name__ != '__main__':
+    sys.path.insert(0, os.path.split(__file__)[0])
+
 
 class Player:
     """The Player class stores all relevant information about a player
@@ -51,7 +54,7 @@ class Player:
 
 
 def main():
-    """Tests various functions defined in player."""
+    """Tests various functions defined in this module."""
     print("\nHello world from player.py!\n")
     
     print("Let's try making a player.")

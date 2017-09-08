@@ -121,7 +121,7 @@ def select_part(parts, slot_num):
 
 
 def main():
-    """Tests various functions defined in part."""
+    """Tests various functions defined in this module."""
     print("\nHello world from part.py!\n")
 
     all_parts = Part.get_parts()

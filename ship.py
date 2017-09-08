@@ -269,7 +269,7 @@ class Ship:
 
 
 def main():
-    """Tests various functions defined in ship."""
+    """Tests various functions defined in this module."""
     print("\nHello world from ship.py!\n")
 
     print("Let's try making a ship.")
