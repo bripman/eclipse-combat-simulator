@@ -159,7 +159,6 @@ class Ship:
                     else:
                         self.has_weapon = 1
                         self.net_damage += a_part.damage * a_part.nshots
-
         self.calc_kill_priority()
 
     def calc_kill_priority(self):

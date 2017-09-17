@@ -48,9 +48,7 @@ class ECS:
         print("Player 1 is defending.")
         print("Player 2 is attacking.")
         for i in range(nplayers):
-            name = user_input.get_str("Please enter player %i's name: "
-                                          % (i + 1))
-            self.players.append(player.Player(name))
+            self.players.append(player.Player())
         self.players[0].is_defending = 1
 
     def assemble_fleets(self):

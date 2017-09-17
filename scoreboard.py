@@ -6,6 +6,9 @@ __main__.
 
 import sys
 import os
+import statistics
+
+import player
 
 
 if __name__ != '__main__':
@@ -37,7 +40,7 @@ class Scoreboard:
         for a_ship in attacker.fleet:
             if a_ship.hull.name not in self.atk_ships_remaining.keys():
                 self.atk_ships_remaining[a_ship.hull.name] = []
-        # See above comments on def_ships_remaining
+        # Same structure as def_ships_remaining for the attacking player
         self.stalemates = 0
 
     def __str__(self):
@@ -48,26 +51,31 @@ class Scoreboard:
             description = "\nNo simulations have been run yet!"
         else:
             description += "\nHere are the simulation results:"
+            # Show stats for defending player
             description += ("\n\n%s won %i times (%.2f%% probability)"
                 % (self.defender.name, self.def_wins,
                 100. * self.def_wins / nsims_completed))
             if self.def_wins > 0:
-                description += ("\n%s's average surviving victorious fleet:"
+                description += ("\n******  %s's average surviving fleet:"
                     % (self.defender.name))
                 for key in self.def_ships_remaining.keys():
-                    description += ("\n-------- %.1f %ss"
-                        % (sum(self.def_ships_remaining[key])
-                        / len(self.def_ships_remaining[key]), key))
+                    description += ("\n******  %.1f +/- %.1f %ss"
+                        % (statistics.mean(self.def_ships_remaining[key]),
+                        statistics.stdev(self.def_ships_remaining[key]),
+                        key))
+            # Show stats for attacking player
             description += ("\n\n%s won %i times (%.2f%% probability)"
                 % (self.attacker.name, self.atk_wins,
                 100. * self.atk_wins / nsims_completed))
             if self.atk_wins > 0:
-                description += ("\n%s's average surviving victorious fleet:"
+                description += ("\n******  %s's average surviving fleet:"
                     % (self.attacker.name))
                 for key in self.atk_ships_remaining.keys():
-                    description += ("\n-------- %.1f %ss"
-                        % (sum(self.atk_ships_remaining[key])
-                        / len(self.atk_ships_remaining[key]), key))
+                    description += ("\n******  %.1f +/- %.1f %ss"
+                        % (statistics.mean(self.atk_ships_remaining[key]),
+                        statistics.stdev(self.atk_ships_remaining[key]),
+                        key))
+            # If there were any stalemates, show those stats too
             if self.stalemates > 0:
                 description += \
                     ("\nThere were %i stalemates (%.2f%% probability)"
@@ -101,6 +109,11 @@ def main():
     """Tests various functions defined in this module."""
     print("\nHello world from scoreboard.py!\n")
 
+    print("Let's make a scoreboard.")
+    defender = player.Player()
+    attacker = player.Player()
+    a_scoreboard = Scoreboard(defender, attacker)
+    print(a_scoreboard)
 
 if __name__ == '__main__':
     main()

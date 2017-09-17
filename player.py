@@ -8,6 +8,7 @@ import os
 
 import ship
 import hull
+import user_input
 
 if __name__ != '__main__':
     sys.path.insert(0, os.path.split(__file__)[0])
@@ -21,16 +22,19 @@ class Player:
 
     players = 0 # Used to tag each player with a unique ID
 
-    def __init__(self, name):
-        self.id = Player.players
+    def __init__(self):
         Player.players += 1
-        self.name = name
+        self.id = Player.players
+        self.name = user_input.get_str("Please enter player %i's name: "
+                                       % (self.id))
         self.fleet = []
         self.is_defending = 0
 
     def __str__(self):
         """Returns a verbose description of the player."""
         description = "-------- %s --------" % (self.name)
+        if self.is_defending:
+            description = "\n-- (%s is defending) --" % (self.name)
         description += "\n%s's id: %i" % (self.name, self.id)
         description += "\n%s's fleet contains:" % (self.name)
         ships = {}
